@@ -116,6 +116,9 @@ gem "d3_rails", "~> 3.1.4"
 # underscore-rails
 gem "underscore-rails", "~> 1.4.4"
 
+# Export repositories over webdav
+gem "dav4rack", git: "https://github.com/andruby/dav4rack.git", branch: "git_resource"
+
 group :assets do
   gem "sass-rails"
   gem "coffee-rails"

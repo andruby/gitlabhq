@@ -180,6 +180,14 @@ Gitlab::Application.routes.draw do
   post 'sparkle_share/accept_invite'  => 'sparkle_share#accept_invite'
 
   #
+  # WebDav
+  #
+  webdav_options = {
+    root: Gitlab.config.gitlab_shell.repos_path,
+    resource_class: Webdav::GitlabResource}
+  mount DAV4Rack::Handler.new(webdav_options), :at => '/', :constraints => {:subdomain => "webdav"}
+
+  #
   # Project Area
   #
   resources :projects, constraints: { id: /(?:[a-zA-Z.0-9_\-]+\/)?[a-zA-Z.0-9_\-]+/ }, except: [:new, :create, :index], path: "/" do
