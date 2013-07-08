@@ -3,6 +3,14 @@ require 'api/api'
 
 Gitlab::Application.routes.draw do
   #
+  # WebDav
+  #
+  webdav_options = {
+    root: Gitlab.config.gitlab_shell.repos_path,
+    resource_class: Webdav::GitlabResource}
+  mount DAV4Rack::Handler.new(webdav_options), :at => '/', :constraints => {:subdomain => "webdav"}
+
+  #
   # Search
   #
   get 'search' => "search#show"
@@ -178,14 +186,6 @@ Gitlab::Application.routes.draw do
   #
   get  'sparkle_share/invite'         => 'sparkle_share#invite'
   post 'sparkle_share/accept_invite'  => 'sparkle_share#accept_invite'
-
-  #
-  # WebDav
-  #
-  webdav_options = {
-    root: Gitlab.config.gitlab_shell.repos_path,
-    resource_class: Webdav::GitlabResource}
-  mount DAV4Rack::Handler.new(webdav_options), :at => '/', :constraints => {:subdomain => "webdav"}
 
   #
   # Project Area
