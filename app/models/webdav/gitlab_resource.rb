@@ -24,9 +24,7 @@ class Webdav::GitlabResource < DAV4Rack::FileResource
   end
 
   def exist?
-    Rails.logger.debug("** exist? with path: #{path.inspect}")
-    Rails.logger.debug("** in_repo: #{in_repo.inspect}")
-    (if in_repo then super() else is_namespace? end).tap { |x| Rails.logger.debug("** exist?: #{x.inspect}") }
+    if in_repo then super() else is_namespace? end
   end
 
   def creation_date
@@ -67,7 +65,7 @@ class Webdav::GitlabResource < DAV4Rack::FileResource
       Rails.logger.debug("** Cache mis, fetching user namespace **")
       user = User.where("username = :username OR email = :username", username: username).first
       generate_fs_structure_for_user(user) if user.try(:valid_password?, password)
-    end.tap { |x| Rails.logger.debug("** NameSpace (from cache): #{x.inspect}") }
+    end
   end
 
   def user_namespace
@@ -85,7 +83,7 @@ class Webdav::GitlabResource < DAV4Rack::FileResource
         fs_structure[project.path] = project.path_with_namespace
       end
     end
-    fs_structure.tap { |x| Rails.logger.debug("** NameSpace: #{x.inspect}") }
+    fs_structure
   end
 
   def ensure_project_fs(project)
@@ -94,7 +92,7 @@ class Webdav::GitlabResource < DAV4Rack::FileResource
     mirror_path = File.join(root, project.path_with_namespace)
     ensure_directory_exists(File.join(root, project.namespace.path)) if project.namespace
     spawn('git fs', chdir: git_path) unless File.exists?(worktree_path)
-    FileUtils.ln_s(worktree_path, mirror_path) unless File.exists?(mirror_path)
+    FileUtils.ln_s(worktree_path, mirror_path) unless File.symlink?(mirror_path)
   end
 
   def ensure_directory_exists(dir)
@@ -117,7 +115,7 @@ class Webdav::GitlabResource < DAV4Rack::FileResource
 
   # Returns the repository path of which path is a part of
   def in_repo
-    return leaf.tap { |x| Rails.logger.debug("** in_repo: #{x.inspect}") } if leaf.is_a?(String)
+    return leaf if leaf.is_a?(String)
   end
 
   def leaf
@@ -142,12 +140,6 @@ class Webdav::GitlabResource < DAV4Rack::FileResource
   def path_parts
     @path_parts ||= clean_path.split('/')
   end
-
-  # Overload file_path for files inside a repo
-  # def file_path
-  #   Rails.logger.debug("** path_without_repo: #{path_without_repo.inspect}")
-  #   File.join(root, "fs/HEAD/worktree", path_without_repo).tap { |x| Rails.logger.debug("** file_path: #{x.inspect}") }
-  # end
 
   # Overload relative_path with
   def path_without_repo
