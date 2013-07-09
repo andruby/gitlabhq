@@ -6,6 +6,8 @@ require 'yaml'
 require 'digest/md5'
 require 'thin'
 
+root_path = "/home/git/webdav-mirror"
+
 class Cache
   attr_accessor :data
 
@@ -74,4 +76,4 @@ class AuthenticatedResource < DAV4Rack::FileResource
 end
 
 use Rack::CommonLogger
-run DAV4Rack::Handler.new(:root => '/home/vagrant/webdav-mirror', :resource_class =>AuthenticatedResource)
+run DAV4Rack::Handler.new(:root => root_path, :resource_class =>AuthenticatedResource)
