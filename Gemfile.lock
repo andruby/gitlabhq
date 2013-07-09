@@ -1,14 +1,4 @@
 GIT
-  remote: https://github.com/andruby/dav4rack.git
-  revision: 24dba12ed5f16c4aeb4e9c577a315463e5382b6c
-  branch: git_resource
-  specs:
-    dav4rack (0.3.0)
-      nokogiri (>= 1.4.2)
-      rack (>= 1.1.0)
-      uuidtools (~> 2.1.1)
-
-GIT
   remote: https://github.com/ctran/annotate_models.git
   revision: 8bd159c7a484093fde84beaa9e6398f25ddacf09
   specs:
@@ -109,6 +99,10 @@ GEM
       railties (>= 3.1.0)
     daemons (1.1.9)
     database_cleaner (1.0.1)
+    dav4rack (0.3.0)
+      nokogiri (>= 1.4.2)
+      rack (>= 1.1.0)
+      uuidtools (~> 2.1.1)
     debug_inspector (0.0.2)
     descendants_tracker (0.0.1)
     devise (2.2.4)
@@ -531,6 +525,7 @@ DEPENDENCIES
   annotate!
   asciidoctor
   awesome_print
+  bcrypt-ruby
   better_errors
   binding_of_caller
   bootstrap-sass
@@ -542,7 +537,7 @@ DEPENDENCIES
   coveralls
   d3_rails (~> 3.1.4)
   database_cleaner
-  dav4rack!
+  dav4rack
   devise
   email_spec
   enumerize

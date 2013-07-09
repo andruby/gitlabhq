@@ -3,15 +3,6 @@ require 'api/api'
 
 Gitlab::Application.routes.draw do
   #
-  # WebDav
-  #
-  webdav_options = {
-    repos_path: Gitlab.config.gitlab_shell.repos_path,
-    root: File.expand_path(File.join(Gitlab.config.gitlab_shell.repos_path, '..', 'webdav-mirror')),
-    resource_class: Webdav::GitlabResource}
-  mount DAV4Rack::Handler.new(webdav_options), :at => '/', :constraints => {:subdomain => "webdav"}
-
-  #
   # Search
   #
   get 'search' => "search#show"
