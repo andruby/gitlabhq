@@ -1,8 +1,13 @@
 require 'digest/md5'
+require 'fileutils'
 require 'dav4rack/resources/git_resource'
 
 class Webdav::GitlabResource < DAV4Rack::FileResource
   UnknownTime = Time.at(0)
+
+  def setup
+    ensure_directory_exists(root)
+  end
 
   def children
     if is_namespace?
@@ -72,7 +77,7 @@ class Webdav::GitlabResource < DAV4Rack::FileResource
   def generate_fs_structure_for_user(user)
     fs_structure = {}
     user.projects.includes(:namespace).each do |project|
-      ensure_project_git_fs(project)
+      ensure_project_fs(project)
       if project.namespace
         fs_structure[project.namespace.path] ||= {}
         fs_structure[project.namespace.path][project.path] = project.path_with_namespace
@@ -83,50 +88,26 @@ class Webdav::GitlabResource < DAV4Rack::FileResource
     fs_structure.tap { |x| Rails.logger.debug("** NameSpace: #{x.inspect}") }
   end
 
-  def ensure_project_git_fs(project)
-    project_path = File.join(repos_path, "#{project.path_with_namespace}.git")
-    Rails.logger.debug("** Ensuring project_path: #{project_path}")
-    spawn('git fs', chdir: project_path)
+  def ensure_project_fs(project)
+    git_path = File.join(repos_path, "#{project.path_with_namespace}.git")
+    worktree_path = File.join(git_path, 'fs', 'HEAD', 'worktree')
+    mirror_path = File.join(root, project.path_with_namespace)
+    ensure_directory_exists(File.join(root, project.namespace.path)) if project.namespace
+    spawn('git fs', chdir: git_path) unless File.exists?(worktree_path)
+    FileUtils.ln_s(worktree_path, mirror_path) unless File.exists?(mirror_path)
   end
 
-  # FIXME: get fails with No Route matches [GET] #{path}
-
-  # # A Hash of {namespace_path: [repo_paths]}
-  # def user_namespaces
-  #   @user_namespaces ||= Rails.cache.fetch("dav:namespaces:user:#{self.user.id}", expires_in: 2.minutes) do
-  #     namespaces = {"" => Set.new}
-  #     self.user.projects.includes(:namespace).each do |project|
-  #       if project.namespace
-  #         namespaces[""] << project.namespace.path
-  #         namespaces[project.namespace.path] ||= []
-  #         namespaces[project.namespace.path] << project.path
-  #       else
-  #         namespaces[""] << project.path
-  #       end
-  #     end
-  #     namespaces
-  #   end
-  # end
-  #
-  # # An Array of repository paths with namespace
-  # def user_repos
-  #   @user_repos ||= Rails.cache.fetch("dav:repos:user:#{self.user.id}", expires_in: 2.minutes) do
-  #     self.user.projects.includes(:namespace).map(&:path_with_namespace)
-  #   end
-  # end
+  def ensure_directory_exists(dir)
+    FileUtils.mkdir_p(dir) unless File.exists?(dir)
+  end
 
   # Should be set to Gitlab's repos_path
   def root
-    if in_repo
-      # overload to this repo's root
-      File.join(repos_path, "#{leaf}.git")
-    else
-      repos_path
-    end.tap { |x| Rails.logger.debug("** root: #{x.inspect}") }
+    options[:root]
   end
 
   def repos_path
-    options[:root]
+    options[:repos_path]
   end
 
   # Path without leading /
@@ -163,14 +144,13 @@ class Webdav::GitlabResource < DAV4Rack::FileResource
   end
 
   # Overload file_path for files inside a repo
-  def file_path
-    path_without_repo = clean_path.gsub(/^#{in_repo}/, '')
-    Rails.logger.debug("** path_without_repo: #{path_without_repo.inspect}")
-    File.join(root, "fs/HEAD/worktree", path_without_repo).tap { |x| Rails.logger.debug("** file_path: #{x.inspect}") }
-  end
+  # def file_path
+  #   Rails.logger.debug("** path_without_repo: #{path_without_repo.inspect}")
+  #   File.join(root, "fs/HEAD/worktree", path_without_repo).tap { |x| Rails.logger.debug("** file_path: #{x.inspect}") }
+  # end
 
   # Overload relative_path with
-  # def relative_path
-  #   path.gsub(/^\/#{in_repo}/,'')
-  # end
+  def path_without_repo
+    clean_path.gsub(/^#{in_repo}/, '')
+  end
 end
