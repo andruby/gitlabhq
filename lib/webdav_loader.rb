@@ -1,6 +1,6 @@
 require 'fileutils'
 
-class WebDavLoader
+class WebdavLoader
   attr_reader :user, :root
   REPOS_PATH = Gitlab.config.gitlab_shell.repos_path
   WEBDAV_ROOT = File.expand_path(File.join(REPOS_PATH,'..','webdav-mirror'))
@@ -60,6 +60,3 @@ class WebDavLoader
     FileUtils.ln_s(worktree_path, mirror_path) unless File.symlink?(mirror_path)
   end
 end
-
-# Make sure we start from a clean slate so deleted users are removed
-WebDavLoader.full_reset!
