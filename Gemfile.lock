@@ -99,6 +99,10 @@ GEM
       railties (>= 3.1.0)
     daemons (1.1.9)
     database_cleaner (1.0.1)
+    dav4rack (0.3.0)
+      nokogiri (>= 1.4.2)
+      rack (>= 1.1.0)
+      uuidtools (~> 2.1.1)
     debug_inspector (0.0.2)
     descendants_tracker (0.0.1)
     devise (2.2.4)
@@ -267,7 +271,7 @@ GEM
     multipart-post (1.2.0)
     mysql2 (0.3.11)
     net-ldap (0.3.1)
-    nokogiri (1.5.9)
+    nokogiri (1.5.10)
     oauth (0.4.7)
     oauth2 (0.8.1)
       faraday (~> 0.8)
@@ -499,6 +503,7 @@ GEM
       execjs (>= 0.3.0)
       multi_json (~> 1.0, >= 1.0.2)
     underscore-rails (1.4.4)
+    uuidtools (2.1.4)
     virtus (0.5.4)
       backports (~> 2.6.1)
       descendants_tracker (~> 0.0.1)
@@ -520,6 +525,7 @@ DEPENDENCIES
   annotate!
   asciidoctor
   awesome_print
+  bcrypt-ruby
   better_errors
   binding_of_caller
   bootstrap-sass
@@ -531,6 +537,7 @@ DEPENDENCIES
   coveralls
   d3_rails (~> 3.1.4)
   database_cleaner
+  dav4rack
   devise
   email_spec
   enumerize

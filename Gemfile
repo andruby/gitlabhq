@@ -116,6 +116,11 @@ gem "d3_rails", "~> 3.1.4"
 # underscore-rails
 gem "underscore-rails", "~> 1.4.4"
 
+# Export repositories over webdav
+gem "dav4rack", require: false
+gem "bcrypt-ruby", require: false
+gem "thin", require: false
+
 group :assets do
   gem "sass-rails"
   gem "coffee-rails"
