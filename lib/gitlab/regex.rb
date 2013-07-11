@@ -7,7 +7,7 @@ module Gitlab
     end
 
     def project_name_regex
-      /\A[a-zA-Z][a-zA-Z0-9_\-\. ]*\z/
+      /\A[a-zA-Z0-9][a-zA-Z0-9_\-\. ]*\z/
     end
 
     def name_regex
@@ -15,7 +15,7 @@ module Gitlab
     end
 
     def path_regex
-      default_regex
+      /\A[a-zA-Z0-9][a-zA-Z0-9_\-\.]*\z/
     end
 
     protected
