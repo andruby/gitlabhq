@@ -81,7 +81,7 @@ Settings['sparkle_share'] ||= Settingslogic.new({})
 Settings.sparkle_share['enabled']           ||= false
 Settings.sparkle_share['fingerprint']       ||= false
 Settings.sparkle_share['anouncements_url']  ||= false
-Settings.sparkle_share['invite_protocol']   = Settings.gitlab.https ? "sparkleshare://addProject/https://" : "sparkleshare://addProject/http://"
+Settings.sparkle_share['invite_protocol']   = Settings.gitlab.https ? "sparkleshare://" : "sparkleshare-unsafe://"
 
 #
 # Gravatar
