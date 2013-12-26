@@ -145,6 +145,7 @@ class Project < ActiveRecord::Base
 
   def team
     @team ||= ProjectTeam.new(self)
+    [Gitlab.config.gitlab.url, path_with_namespace].join("/")
   end
 
   def repository
