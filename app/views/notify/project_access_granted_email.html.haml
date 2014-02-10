@@ -3,3 +3,14 @@
 %p
   = link_to project_url(@project) do
     = @project.name_with_namespace
+
+%h3 SparkleShare
+%p
+  If you want to use this repository with SparkleShare, manually add it with this information:
+  %ul
+    %li
+      %strong Address:
+      ssh://git@git.venturespirit.com
+    %li
+      %strong Remote path:
+      = "/#{@project.path_with_namespace}"
